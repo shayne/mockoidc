@@ -36,7 +36,6 @@ type MockOIDC struct {
 	UserQueue    *UserQueue
 	ErrorQueue   *ErrorQueue
 
-	tlsConfig   *tls.Config
 	middleware  []func(http.Handler) http.Handler
 	fastForward time.Duration
 }
@@ -122,8 +121,6 @@ func (m *MockOIDC) Start(ln net.Listener, cfg *tls.Config) error {
 		Handler:   handler,
 		TLSConfig: cfg,
 	}
-	// Track this to know if we are https
-	m.tlsConfig = cfg
 
 	go func() {
 		err := m.Server.Serve(ln)
@@ -214,7 +211,7 @@ func (m *MockOIDC) Addr() string {
 		return ""
 	}
 	proto := "http"
-	if m.tlsConfig != nil {
+	if m.Server.TLSConfig != nil {
 		proto = "https"
 	}
 	return fmt.Sprintf("%s://%s", proto, m.Server.Addr)
