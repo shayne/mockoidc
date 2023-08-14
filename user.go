@@ -25,9 +25,11 @@ type User interface {
 // MockUser is a default implementation of the User interface
 type MockUser struct {
 	Subject           string
+	Name              string
 	Email             string
 	EmailVerified     bool
 	PreferredUsername string
+	Picture           string
 	Phone             string
 	Address           string
 	Groups            []string
@@ -77,9 +79,11 @@ func (u *MockUser) Userinfo(scope []string) ([]byte, error) {
 
 type mockClaims struct {
 	*IDTokenClaims
+	Name              string   `json:"name,omitempty"`
 	Email             string   `json:"email,omitempty"`
 	EmailVerified     bool     `json:"email_verified,omitempty"`
 	PreferredUsername string   `json:"preferred_username,omitempty"`
+	Picture           string   `json:"picture,omitempty"`
 	Phone             string   `json:"phone_number,omitempty"`
 	Address           string   `json:"address,omitempty"`
 	Groups            []string `json:"groups,omitempty"`
@@ -90,6 +94,8 @@ func (u *MockUser) Claims(scope []string, claims *IDTokenClaims) (jwt.Claims, er
 
 	return &mockClaims{
 		IDTokenClaims:     claims,
+		Name:              user.Name,
+		Picture:           user.Picture,
 		Email:             user.Email,
 		EmailVerified:     user.EmailVerified,
 		PreferredUsername: user.PreferredUsername,
